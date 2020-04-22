@@ -140,6 +140,14 @@ def get_sum_left_transfers():
     sum = models.Employees.objects.aggregate(Sum('balance'))
     return sum['balance__sum']
 
+
+
+def get_active_deals():
+    deals = models.Deals.objects.filter(status__in=[1, 2, 3]).values()
+    print(deals)
+    return deals
+
+
 def get_work_types():
     """
      Получить типы работ
@@ -615,8 +623,7 @@ def get_master_card_info(master_id):
         'transfers': list(users_transfers),
     }
 
-def get_active_deals():
-    return models.Deals.objects.all().filter(status=1).values()
+
 
 def get_history():
     return models.UsersHistory.objects.all().values()

@@ -65,7 +65,9 @@
                 <a class="nav-link" href="{% url 'site_backend:operators_url' %}">
                   <i class="fas fa-fw"></i>
                   <span>Операторы</span></a>
-
+                <a class="nav-link" href="{% url 'site_backend:active_deals_url' %}">
+                  <i class="fas fa-fw"></i>
+                  <span>Активные сделки</span></a>
               </li>
     {% endif %}
 
@@ -79,7 +81,7 @@
           <span>Клиенты</span>
         </a>
         <div id="collapseCl" class="collapse" aria-labelledby="headingCl" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
+          <div class="bg-dark py-2 collapse-inner rounded">
             <a class="collapse-item" href="{% url 'site_backend:clients_url' %}">Активные</a>
           </div>
         </div>
@@ -93,7 +95,7 @@
           <span>Пользователи</span>
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
+          <div class="bg-dark py-2 collapse-inner rounded">
             {% if request.user.is_superuser %}
             <a class="collapse-item" href="{% url 'site_backend:am_url' %}">Активные</a>
             <a class="collapse-item" href="{% url 'site_backend:blocked_url' %}">Заблокированные</a>
@@ -111,7 +113,7 @@
           <span>Техническое меню</span>
         </a>
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
+          <div class="bg-dark py-2 collapse-inner rounded">
             <a class="collapse-item" href="{% url 'site_backend:tech_url' %}">Рассылка и установки</a>
           </div>
         </div>
@@ -134,7 +136,7 @@
         <div id="content">
 
           <!-- Topbar -->
-          <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+          <nav class="navbar navbar-expand navbar-light bg-dark topbar mb-4 static-top shadow">
 
             <!-- Sidebar Toggle (Topbar) -->
             <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">

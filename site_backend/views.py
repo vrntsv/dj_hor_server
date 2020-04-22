@@ -12,7 +12,7 @@ from . import bot
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 
-
+@csrf_exempt
 def login_router(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
@@ -100,6 +100,21 @@ def index_router(request):
 
     else:
         return redirect('/login')
+
+
+
+
+def active_deals_router(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        if request.method == 'GET':
+            return render(request, 'site_backend/active_deals.html',
+                          {
+                            'deals': services.get_active_deals(),
+                          })
+        return HttpResponse(status=405)
+    else:
+        return redirect('/login')
+
 
 
 def tech_router(request):
