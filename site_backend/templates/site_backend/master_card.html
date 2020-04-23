@@ -211,8 +211,8 @@
         </div>
         <div class="card-body">
           <div class="btn-group col">
-            <button class="btn btn-success " type="submit">Пополнить</button> 
-            <button class="btn btn-danger "type="submit">Списать</button> 
+            <button class="btn btn-outline-success " type="submit">Пополнить</button>
+            <button class="btn btn-outline-danger "type="submit">Списать</button>
           </div>
         </div>
       </div>
@@ -299,13 +299,13 @@
                   <td class=" text-center" >
                     <div class="btn-group">
                       {% if deal|get_value_from_dict:'status' == 4%}
-                            <button class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Оплачено</button>
+                            <button class="btn btn-outline-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Оплачено</button>
                       {% elif deal|get_value_from_dict:'status' == 2 %}
-                            <button class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Отложена</button>
+                            <button class="btn btn-outline-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Отложена</button>
                         {% elif deal|get_value_from_dict:'status' == 3 %}
-                            <button class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Ожидает оплаты</button>
+                            <button class="btn btn-outline-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Ожидает оплаты</button>
                         {% elif deal|get_value_from_dict:'status' == -1 %}
-                            <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Сорвано</button>
+                            <button class="btn btn-outline-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Сорвано</button>
                         {% else %}
                           <td class='text-warning text-center font-weight-bold'>В работе
                         {% endif %}
@@ -340,8 +340,8 @@
                                     <input type="number" class="form-control" name="money" placeholder="Введите сумму" required><br>
                                     <textarea name="comment" id="" cols="20" rows="5" placeholder="Введите комментарий"></textarea>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-success">Подтвердить</button>
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                        <button type="submit" class="btn btn-outline-success">Подтвердить</button>
+                                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Закрыть</button>
                                     </div>
 
                                 </div>
@@ -357,8 +357,8 @@
                                         <input type="number" class="form-control" name="money" placeholder="Введите сумму" required><br>
                                         <textarea name="comment" id="" cols="20" rows="5" placeholder="Введите комментарий"></textarea>
                                         <div class="modal-footer">
-                                            <button type="submit" class="btn btn-success">Подтвердить</button>
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                            <button type="submit" class="btn btn-outline-success">Подтвердить</button>
+                                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Закрыть</button>
                                         </div>
                                     </div>
                                 </div>

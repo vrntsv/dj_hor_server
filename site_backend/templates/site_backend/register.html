@@ -52,7 +52,7 @@
                           </th>
                           <th>
                             <div class="btn-group">
-                              <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Открыть</button>
+                              <button class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Открыть</button>
                               <div class="dropdown-menu">
                                   {% for wt in wt_list %}
                                       {% if wt|get_value_from_dict:'id' in emp|get_value_from_dict:'emp_wt' %}
@@ -106,8 +106,8 @@
                           <th>{{ emp|get_value_from_dict:'emp_data'|get_value_from_dict:'reg_date' }}</th>
                           <th{% if emp|get_value_from_dict:'emp_data'|get_value_from_dict:'promo_id' and emp|get_value_from_dict:'emp_data'|get_value_from_dict:'promo_id' != 'None' %} {{ emp|get_value_from_dict:'emp_data'|get_value_from_dict:'promo_id' }} {% else %} - {% endif %}</th>
                           <th>
-                            <button type="submit" name="confirm" value="yes" class='col btn btn btn-success'>Подтвердить</button>
-                            <button type="submit" name="confirm" value="no"  class='col btn btn btn-danger'>Удалить</button>
+                            <button type="submit" name="confirm" value="yes" class='col btn  btn-outline-success'>Подтвердить</button>
+                            <button type="submit" name="confirm" value="no"  class='col btn btn-outline-danger'>Удалить</button>
                           </th>
                         </tr>
                           </form>

@@ -58,10 +58,10 @@
 
                                  {% if client|get_value_from_dict:'status' == 1 %}
                                      <input type="hidden" name="action" value="freeze">
-                                    <button class='btn btn-danger'>Заблокировать</button>
+                                    <button class='btn btn-outline-danger'>Заблокировать</button>
                                  {% else %}
                                      <input type="hidden" name="action" value="unfreeze">
-                                    <button class='btn btn-success'>Разблокировать</button>
+                                    <button class='btn btn-outline-success'>Разблокировать</button>
                                  {% endif %}
                               </td>
 

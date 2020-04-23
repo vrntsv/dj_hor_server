@@ -146,7 +146,7 @@
                       <form action="{% url "site_backend:tech_alter_key_url" %}" method="post">
                           {% csrf_token %}
                             <input class="btn" style='width:100%; margin-bottom: 10px;' placeholder="Введите новый" type="text" name="new_key">
-                            <button class="btn btn-primary" style='width:100%'>ИЗМЕНИТЬ</button>
+                            <button class="btn btn-outline-primary" style='width:100%'>ИЗМЕНИТЬ</button>
                       </form>
                   </div>
                 </div>
@@ -164,7 +164,7 @@
                       <form action="{% url "site_backend:tech_add_city_url" %}" method="post">
                           {% csrf_token %}
                           <input class="btn" style='width:100%; margin-bottom: 10px;' placeholder="Введите новый город" type="text" name="new_city">
-                          <button class="btn btn-primary" style='width:100%; margin-bottom: 10px;'>Добавить город</button>
+                          <button class="btn btn-outline-primary" style='width:100%; margin-bottom: 10px;'>Добавить город</button>
                         </form>
                     <table class="table table-sm-4 table-md-8 table-lg-12 table-bordered" id="dataTable" width="100%" cellspacing="0">
                       <thead>
@@ -187,7 +187,7 @@
                               <form action="{% url 'site_backend:tech_delete_city_url' %}" method="post">
                                   {% csrf_token %}
                                   <input type="hidden" name="city_id" value="{{ city|get_value_from_dict:'id' }}">
-                                    <button  type="submit" class="col my-auto btn btn-danger">Удалить</button>
+                                    <button  type="submit" class="col my-auto btn btn-outline-danger">Удалить</button>
                                   </form>
                           </th>
                         </tr>
@@ -242,8 +242,8 @@
         </div>
         <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
+          <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-outline-primary" href="login.html">Logout</a>
         </div>
       </div>
     </div>

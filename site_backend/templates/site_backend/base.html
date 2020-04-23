@@ -39,8 +39,8 @@
   <!-- Page Wrapper -->
   <div id="wrapper">
 
-    <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <!-- ВСТАВЛЕН ДАРК-->
+    <ul class="navbar-nav bg-gradient-dark sidebar sidebar-dark accordion" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
@@ -81,7 +81,7 @@
           <span>Клиенты</span>
         </a>
         <div id="collapseCl" class="collapse" aria-labelledby="headingCl" data-parent="#accordionSidebar">
-          <div class="bg-dark py-2 collapse-inner rounded">
+          <div class="bg-light py-2 collapse-inner rounded">
             <a class="collapse-item" href="{% url 'site_backend:clients_url' %}">Активные</a>
           </div>
         </div>
@@ -95,12 +95,13 @@
           <span>Пользователи</span>
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-dark py-2 collapse-inner rounded">
+          <div class="bg-light py-2 collapse-inner rounded">
             {% if request.user.is_superuser %}
             <a class="collapse-item" href="{% url 'site_backend:am_url' %}">Активные</a>
             <a class="collapse-item" href="{% url 'site_backend:blocked_url' %}">Заблокированные</a>
              {% endif %}
               <a class="collapse-item" href="{% url 'site_backend:frozen_url' %}">Замороженные</a>
+
             <a class="collapse-item" href="{% url 'site_backend:registration_url' %}">Регистрация</a>
           </div>
         </div>
@@ -113,7 +114,7 @@
           <span>Техническое меню</span>
         </a>
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-          <div class="bg-dark py-2 collapse-inner rounded">
+          <div class="bg-light py-2 collapse-inner rounded">
             <a class="collapse-item" href="{% url 'site_backend:tech_url' %}">Рассылка и установки</a>
           </div>
         </div>
@@ -135,7 +136,7 @@
         <!-- Main Content -->
         <div id="content">
 
-          <!-- Topbar -->
+          <!-- ВСТАВЛЕН ДАРК -->
           <nav class="navbar navbar-expand navbar-light bg-dark topbar mb-4 static-top shadow">
 
             <!-- Sidebar Toggle (Topbar) -->
@@ -176,6 +177,7 @@
                         {% endif %}
 
                         </a>
+                  </li>
                 <!-- Dropdown - User Information -->
                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                           <a class="dropdown-item" href="" data-toggle="modal" data-target="#logoutModal">

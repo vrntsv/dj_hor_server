@@ -15,11 +15,13 @@ from django.core.serializers.json import DjangoJSONEncoder
 @csrf_exempt
 def login_router(request):
     if request.method == 'GET':
+
         if request.user.is_authenticated:
             return redirect('/')
         else:
             return render(request, 'site_backend/login.html')
     elif request.method == 'POST':
+
         print(request.POST)
         user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
         print(user)
@@ -45,6 +47,7 @@ def index_router(request):
         if request.method == 'GET':
             if request.user.is_superuser:
                 print('is_super')
+                print('testtstes')
                 return render(request, 'site_backend/index.html',
                               {
                                   'sum_very_first': services.get_sum_very_first(),
@@ -55,13 +58,9 @@ def index_router(request):
                                   'sum_bonuses': services.get_sum_bonuses(),
                                   'sum_excl_debt': services.sum_excl_debt(),
                                   'left_transfers': services.get_sum_left_transfers(),
-                                  'work_types': services.get_work_types(),
-                                  'very_first_emps': services.get_employees_very_first(),
-                                  'cites': services.get_active_cities(),
-                                  'emp_ammount_in_cities': services.get_emp_ammount_in_cities(),
-                                  'exclusive_by_wt': services.get_emp_ammount_wt(exclusive=True),
-                                  'active_by_wt': services.get_emp_ammount_wt(active=True),
-                               }
+                                  'very_first_emps': services.get_employees_very_first_raw(),
+
+                              }
                               )
             else:
                 return render(request, 'site_backend/index.html',
@@ -84,13 +83,9 @@ def index_router(request):
                                       'sum_bonuses': services.get_sum_bonuses(),
                                       'sum_excl_debt': services.sum_excl_debt(),
                                       'left_transfers': services.get_sum_left_transfers(),
-                                      'very_first_emps': services.get_employees_very_first(),
-                                      'cites': services.get_active_cities(),
-                                      'emp_ammount_in_cities': services.get_emp_ammount_in_cities(),
-                                      'exclusive_by_wt': services.get_emp_ammount_wt(exclusive=True),
-                                      'active_by_wt': services.get_emp_ammount_wt(active=True),
+                                      'very_first_emps': services.get_employees_very_first_raw(),
 
-                                         }
+                                  }
                                   )
                 else:
                     return render(request, 'site_backend/index.html',
@@ -102,19 +97,18 @@ def index_router(request):
         return redirect('/login')
 
 
-
-
-def active_deals_router(request):
+def statistic_router(request):
     if request.user.is_authenticated and request.user.is_superuser:
         if request.method == 'GET':
-            return render(request, 'site_backend/active_deals.html',
+            return render(request, 'site_backend/statistic.html',
                           {
-                            'deals': services.get_active_deals(),
+                              'work_types': services.get_work_types(),
+                              'very_first_emps': services.get_employees_very_first(),
+                              'cites': services.get_active_cities(),
+                              'emp_ammount_in_cities': services.get_emp_ammount_in_cities(),
+                              'exclusive_by_wt': services.get_emp_ammount_wt(exclusive=True),
+                              'active_by_wt': services.get_emp_ammount_wt(active=True),
                           })
-        return HttpResponse(status=405)
-    else:
-        return redirect('/login')
-
 
 
 def tech_router(request):
@@ -299,7 +293,7 @@ def directions_change_router(request, wt_id):
     else:
         return redirect('/login')
 
-
+@cache_page(60*15)
 def active_masters_router(request):
     if request.user.is_authenticated:
         if request.method == 'GET':
@@ -505,6 +499,8 @@ def registration_router(request):
 
 @csrf_exempt
 def operators_router(request):
+
+
     if request.user.is_authenticated:
 
         if request.method == 'GET':
@@ -543,6 +539,7 @@ def operators_delete_router(request, operator_id):
 
 
 def history_router(request):
+
     if request.user.is_authenticated:
 
         if request.method == 'GET':
@@ -569,3 +566,13 @@ def clients_router(request):
         return HttpResponse(status=405)
 
 
+def active_deals_router(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        if request.method == 'GET':
+            return render(request, 'site_backend/active_deals.html',
+                          {
+                            'deals': services.get_active_deals(),
+                          })
+        return HttpResponse(status=405)
+    else:
+        return redirect('/login')
