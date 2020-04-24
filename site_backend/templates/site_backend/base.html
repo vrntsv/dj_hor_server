@@ -68,6 +68,9 @@
                 <a class="nav-link" href="{% url 'site_backend:active_deals_url' %}">
                   <i class="fas fa-fw"></i>
                   <span>Активные сделки</span></a>
+                  <a class="nav-link" href="{% url 'site_backend:clients_url' %}">
+                  <i class="fas fa-fw"></i>
+                  <span>Клиенты</span></a>
               </li>
     {% endif %}
 
@@ -75,24 +78,11 @@
       <hr class="sidebar-divider">
 
       <!-- Nav Item - Pages Collapse Menu -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#" id="collCL" data-toggle="collapse" data-target="#collapseCl" aria-expanded="true" aria-controls="collapseCl">
-          <i class="fas fa-fw fa-user"></i>
-          <span>Клиенты</span>
-        </a>
-        <div id="collapseCl" class="collapse" aria-labelledby="headingCl" data-parent="#accordionSidebar">
-          <div class="bg-light py-2 collapse-inner rounded">
-            <a class="collapse-item" href="{% url 'site_backend:clients_url' %}">Активные</a>
-          </div>
-        </div>
-      </li>
-
-
-              <!-- Nav Item - Pages Collapse Menu -->
+       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" id="collTwo" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
           <i class="fas fa-fw fa-user"></i>
-          <span>Пользователи</span>
+          <span>Исполнители</span>
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-light py-2 collapse-inner rounded">
@@ -159,25 +149,25 @@
 
 
 
+
                   <div class="topbar-divider d-none d-sm-block"></div>
                   <!-- Nav Item - User Information -->
                   <li class="nav-item dropdown no-arrow">
                     <a class="nav-link dropdown-toggle" href="№" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {% if request.user.is_superuser %}
 
-                          <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ request.user.username }}</span>
+                          <span class="mr-2 d-none d-lg-inline text-gray-600 small">Дмитрий</span>
                           <!-- Ава админа -->
                           <img class="img-profile rounded-circle" src="/static/img/admin.jpg">
                           <!-- Ава оператора -->
                           <!-- <img class="img-profile rounded-circle" src="img/operator.jpg"> -->
                           {% else %}
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ request.user.username }}</span>
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Оператор</span>
                           <!-- Ава админа -->
                           <img class="img-profile rounded-circle" src="/static/img/operator.jpg">
                         {% endif %}
 
                         </a>
-                  </li>
                 <!-- Dropdown - User Information -->
                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                           <a class="dropdown-item" href="" data-toggle="modal" data-target="#logoutModal">
@@ -191,6 +181,7 @@
             </ul>
           </nav>
           <!-- End of Topbar -->
+        </div>
 {% endcache %}
 
   {%  block content %}

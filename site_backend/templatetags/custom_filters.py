@@ -49,3 +49,22 @@ def do_abs(number):
         return abs(number)
     except TypeError:
         return number
+
+
+@register.filter
+def get_master_phone(id_master):
+    try:
+        print(id_master)
+        print(models.Employees.objects.filter(id=id_master).values('phone'))
+        return models.Employees.objects.filter(id=id_master).values('phone')[0]['phone']
+    except Exception:
+        return '-'
+
+@register.filter
+def add_emoji_if_excl(id_master):
+    print(models.Employees.objects.filter(id=id_master).values('exclusive'))
+    if models.Employees.objects.filter(id=id_master).values('exclusive')[0]['exclusive']:
+        return '👑'
+    else:
+        return ''
+
