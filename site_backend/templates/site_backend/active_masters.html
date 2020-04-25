@@ -58,7 +58,7 @@
                           m - выполнено
                           k - коэффициент  -->
                           <th data-toggle="tooltip" data-placement="top" title="{{emp|get_value_from_dict:'closed_deals_count'}}/{{emp|get_value_from_dict:'droped_deals_count'}}/{{emp|get_value_from_dict:'proped_deals_count'}}">
-											80%
+                              {{ emp|get_value_from_dict:'id'|success_percent }}%
                           <!--  -->
                       	  </th>
                           <th>

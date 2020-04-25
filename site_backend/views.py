@@ -466,6 +466,91 @@ def master_card_charge_router(request, master_id):
                           })
         return HttpResponse(status=405)
 
+@csrf_exempt
+def master_card_change_balance(request, master_id):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            services.change_balance(master_id, request.POST['main_balance'], request.POST['bonuses'])
+            return render(request, 'site_backend/master_card.html',
+                          {
+                              'info': services.get_master_card_info(master_id),
+                          })
+        return HttpResponse(status=405)
+
+@csrf_exempt
+def master_card_freeze_router(request, master_id):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            services.freeze_user(master_id, request.POST.get('comment'))
+            #bot.send_message(master_id, request.POST.get('comment'))
+            return render(request, 'site_backend/master_card.html',
+                          {
+                              'info': services.get_master_card_info(master_id),
+                          })
+        return HttpResponse(status=405)
+
+@csrf_exempt
+def master_card_unfreeze_router(request, master_id):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            services.unfreeze_user(master_id)
+            #bot.send_message(master_id, 'Вам открыт доступ к заказам')
+            return render(request, 'site_backend/master_card.html',
+                          {
+                              'info': services.get_master_card_info(master_id),
+                          })
+        return HttpResponse(status=405)
+
+@csrf_exempt
+def master_card_block_user_router(request, master_id):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            services.block_user(master_id, request.POST['comment'])
+            bot.send_message(master_id, request.POST['comment'])
+            return render(request, 'site_backend/master_card.html',
+                          {
+                              'info': services.get_master_card_info(master_id),
+                          })
+        return HttpResponse(status=405)
+
+@csrf_exempt
+def master_card_unblock_user_router(request, master_id):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            services.unblock_user(master_id)
+            bot.send_message(master_id, 'Вам открыт доступ к заказам')
+            return render(request, 'site_backend/master_card.html',
+                          {
+                              'info': services.get_master_card_info(master_id),
+                          })
+        return HttpResponse(status=405)
+
+@csrf_exempt
+def master_card_make_excl_user_router(request, master_id):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            services.make_excl(master_id)
+            #bot.send_message(master_id, 'Вам ')
+            return render(request, 'site_backend/master_card.html',
+                          {
+                              'info': services.get_master_card_info(master_id),
+                          })
+        return HttpResponse(status=405)
+
+@csrf_exempt
+def master_card_unmake_excl_user_router(request, master_id):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            services.unmake_excl(master_id)
+            #bot.send_message(master_id, 'Вам ')
+            return render(request, 'site_backend/master_card.html',
+                          {
+                              'info': services.get_master_card_info(master_id),
+                          })
+        return HttpResponse(status=405)
+
+
+
 
 @csrf_exempt
 def registration_router(request):

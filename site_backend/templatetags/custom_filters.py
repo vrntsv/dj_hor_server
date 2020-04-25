@@ -1,6 +1,7 @@
 from django import template
 from django.utils.html import mark_safe
 import site_backend.models as models
+from django.db.models import Sum, Count
 
 
 register = template.Library()
@@ -67,4 +68,17 @@ def add_emoji_if_excl(id_master):
         return '👑'
     else:
         return ''
+
+
+@register.filter
+def success_percent(id_master):
+    complited_deals = models.Deals.objects.filter(id=id_master, status=1).aggregate(Count('id'))['id__count']
+    all_deals = models.Deals.objects.filter(id_master).aggregate(Count('id'))['id__count']
+    try:
+        return complited_deals/100 * all_deals
+    except Exception:
+        return 0
+
+
+
 

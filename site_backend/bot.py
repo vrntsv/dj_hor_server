@@ -33,6 +33,10 @@ def send_message_tech(text, city_list, image=None, to_all=False, to_excl=False, 
             print('err sending to {}'.format(id['id']))
 
 
+def send_message(id, text):
+    bot.send_message(id, text)
+
+
 def change_money_and_notify(user_id, ammount, comment=False, write_off=False, charge=False):
     user = models.Employees.objects.get(id=user_id)
     if write_off:

@@ -439,6 +439,55 @@ def get_online_ammount_wt():
 #
 
 
+def freeze_user(id_user, comment):
+    emp = models.Employees.objects.get(id=id_user)
+    emp.status = 2
+    emp.comment = comment
+    emp.save()
+
+
+def unfreeze_user(id_user):
+    emp = models.Employees.objects.get(id=id_user)
+    emp.status = 1
+    emp.save()
+
+
+def block_user(id_user, comment):
+    emp = models.Employees.objects.get(id=id_user)
+    emp.comment = comment
+    emp.status = 3
+    emp.save()
+
+
+def unblock_user(id_user):
+    emp = models.Employees.objects.get(id=id_user)
+    emp.status = 1
+    emp.save()
+
+def change_balance(id_user, main_balance, bonuses):
+    emp = models.Employees.objects.get(id=id_user)
+    try:
+        emp.balance += int(main_balance)
+    except:
+        print('1')
+    try:
+        emp.bonuses += int(bonuses)
+    except:
+        print('1')
+    emp.save()
+
+def make_excl(id_user):
+    emp = models.Employees.objects.get(id=id_user)
+    emp.exclusive = 1
+    emp.save()
+
+
+def unmake_excl(id_user):
+    emp = models.Employees.objects.get(id=id_user)
+    emp.exclusive = None
+    emp.save()
+
+
 
 def get_active_masters_info(wt=None, city=None, exclusive=None, active=None,
                             vf=None, freeze=None, blocked=None, negative_balance=None,
