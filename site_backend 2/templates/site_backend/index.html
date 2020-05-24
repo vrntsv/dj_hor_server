@@ -1,0 +1,306 @@
+{% extends 'site_backend/base.html' %}
+{% load cache %}
+{% load djutils %}
+
+{% block tittle %}
+        <title>Админ</title>
+{% endblock %}
+{% load custom_filters %}
+
+{% cache 500 index %}
+
+{% block content %}
+    {% if request.user.is_superuser %}
+        <!-- Begion Info-card  -->
+        <div class="container-fluid">
+          <div class="row">
+	          <!-- Earnings Deposit -->
+	          <div class="col-xl-3 col-md-6 mb-4">
+	              <div class="card border-left-primary shadow h-100 py-2">
+	                <div class="card-body">
+	                  <div class="row no-gutters align-items-center">
+	                    <div class="col mr-2">
+	                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Депозитов пополнено</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{% if sum_transfer %}{{sum_transfer}}{% else %} 0 {% endif %}</div>
+	                    </div>
+	                    <div class="col-auto">
+	                      <i class="fas fa-ruble-sign fa-2x text-gray-300"></i>
+	                    </div>
+	                  </div>
+	                </div>
+	              </div>
+	            </div>
+				    <!-- Spend Deposit -->
+	          <div class="col-xl-3 col-md-6 mb-4">
+	              <div class="card border-left-success shadow h-100 py-2">
+	                <div class="card-body">
+	                  <div class="row no-gutters align-items-center">
+	                    <div class="col mr-2">
+	                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Депозитов потрачено</div>
+	                      <div class="h5 mb-0 font-weight-bold text-gray-800">{% if spent_transfer %}{{spent_transfer}} {% else %} 0 {% endif %}</div>
+	                    </div>
+	                    <div class="col-auto">
+	                      <i class="fas fa-ruble-sign fa-2x text-gray-300"></i>
+	                    </div>
+	                  </div>
+	                </div>
+	              </div>
+	            </div>
+            <!-- Left Deposit -->
+	          <div class="col-xl-3 col-md-6 mb-4">
+	              <div class="card border-left-danger shadow h-100 py-2">
+	                <div class="card-body">
+	                  <div class="row no-gutters align-items-center">
+	                    <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Депозитов осталось</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {% if left_transfers %}
+                                    <a href="{% url 'site_backend:am_pb' %}"> {{ left_transfers }} </a>
+                                    {% else %} 0 {% endif %}
+                                </div>
+                            </div>
+	                    <div class="col-auto">
+	                      <i class="fas fa-ruble-sign fa-2x text-gray-300"></i>
+	                    </div>
+	                  </div>
+	                </div>
+	              </div>
+	            </div>
+	          <!-- SUM bonus -->
+	          <div class="col-xl-3 col-md-6 mb-4">
+	              <div class="card border-left-danger shadow h-100 py-2">
+	                <div class="card-body">
+	                  <div class="row no-gutters align-items-center">
+	                    <div class="col mr-2">
+	                      <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">БОНУСОВ</div>
+	                      <div class="h5 mb-0 font-weight-bold text-gray-800">{% if get_sum_bonuses %} {{ get_sum_bonuses }} {% else %} 0 {% endif %}</div>
+	                    </div>
+	                    <div class="col-auto">
+	                      <i class="fas fa-ruble-sign fa-2x text-gray-300"></i>
+	                    </div>
+	                  </div>
+	                </div>
+	              </div>
+	            </div>
+	          <!-- SUM earnings referal -->
+	          <div class="col-xl-3 col-md-6 mb-4">
+	                <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                        БОНУСОВ ПО РЕФЕРАЛЬНОЙ ПРОГРАММЕ
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {% if sum_promo %}
+                                            <a href="{% url "site_backend:am_reg_today" %}">{{ sum_promo }} </a>
+                                        {% else %} 0 {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                  <i class="fas fa-ruble-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+	                </div>
+	            </div>
+	          <!-- Earning very first -->
+	          <div class="col-xl-3 col-md-6 mb-4">
+	              <div class="card border-left-success shadow h-100 py-2">
+	                <div class="card-body">
+	                  <div class="row no-gutters align-items-center">
+	                    <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Cамый первый
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                <a href="{% url "site_backend:am_url_vf" %}">{{ sum_very_first }}</a>
+                            </div>
+	                    </div>
+	                    <div class="col-auto">
+	                      <i class="fas fa-ruble-sign fa-2x text-gray-300"></i>
+	                    </div>
+	                  </div>
+	                </div>
+	              </div>
+	            </div>
+	          <!-- Due excl masters -->
+	          <div class="col-xl-3 col-md-6 mb-4">
+	              <div class="card border-left-success shadow h-100 py-2">
+	                <div class="card-body">
+	                  <div class="row no-gutters align-items-center">
+	                    <div class="col mr-2">
+	                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Долг универсалов</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if sum_excl_debt %}
+                                    <a href="{% url "site_backend:am_excl_nb" %}"> {{ sum_excl_debt|do_abs }} </a>
+                                {% else %} 0 {% endif %}
+                            </div>
+	                    </div>
+	                    <div class="col-auto">
+	                      <i class="fas fa-ruble-sign fa-2x text-gray-300"></i>
+	                    </div>
+	                  </div>
+	                </div>
+	              </div>
+	            </div>
+	          <!-- Earning partners deal -->
+	          <div class="col-xl-3 col-md-6 mb-4">
+	              <div class="card border-left-success shadow h-100 py-2">
+	                <div class="card-body">
+	                  <div class="row no-gutters align-items-center">
+	                    <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                              Доход от партнерских сделок
+                            </div>
+	                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                              {% if sum_proped %}
+                                  {{ sum_proped }}
+                              {% else %} 0 {% endif %}
+                            </div>
+	                    </div>
+	                    <div class="col-auto">
+	                      <i class="fas fa-ruble-sign fa-2x text-gray-300"></i>
+	                    </div>
+	                  </div>
+	                </div>
+	              </div>
+	            </div>
+            <!-- Earning cashless deal -->
+	          <div class="col-xl-3 col-md-6 mb-4">
+	              <div class="card border-left-success shadow h-100 py-2">
+	                <div class="card-body">
+	                  <div class="row no-gutters align-items-center">
+	                    <div class="col mr-2">
+	                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                              Доход от безналичных сделок
+                          </div>
+	                      <div class="h5 mb-0 font-weight-bold text-gray-800">
+                              {% if sum_proped %}
+                                  {{ sum_proped }}
+                              {% else %} 0 {% endif %}
+                          </div>
+	                    </div>
+	                    <div class="col-auto">
+	                      <i class="fas fa-ruble-sign fa-2x text-gray-300"></i>
+	                    </div>
+	                  </div>
+	                </div>
+	              </div>
+	            </div>
+          </div>
+        </div>
+        <!-- END Info-card  -->
+
+        <!-- Content Row -->
+        <div class="container-fluid">
+            <div class="row w-100">
+                <div class="col-xl-4 col-lg-5">
+                  <!-- Start choose day -->
+                  <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                      <h6 class="m-0 font-weight-bold text-primary">Период времени</h6>
+                    </div>
+                    <div class="card-body">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <input style="margin-bottom: 3%" class="form-control" data-range="true" type="date" name="start_date" required>
+                            <input style="margin-bottom: 5%" class="form-control" data-range="true" type="date" name="end_date" required>
+                            <input class="btn btn-outline-success btn-block" type="submit" value="Получить">
+                        </form>
+                    </div>
+                  </div>
+                  <!-- End choose day -->
+                </div>
+                <!-- Area Statistic -->
+                <div class="col-xl-8 col-lg-7">
+                    <div class="card shadow mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">🥇 <a href="{% url "site_backend:am_url_vf" %}">Cамый первый </a> </h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                  <thead>
+                                    <tr>
+                                      <th>ФИО</th>
+                                      <th>Номер</th>
+                                      <th>Тариф</th>
+                                      <th>Дата начала</th>
+                                      <th>Дата конца</th>
+                                      <th>Цена</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                  {% for emp in very_first_emps %}
+                                    <tr>
+                                      <td><a href="{% url "site_backend:master_card_url" emp|get_value_from_dict:'id' %}">{{ emp|get_value_from_dict:'full_name'}}</a></td>
+                                      <td>{{ emp|get_value_from_dict:'phone' }}</td>
+                                      <td>{{emp|get_value_from_dict:'tariff'}}</td>
+                                      <td>{{ emp|get_value_from_dict:'date_start'|date:'Y-m-d' }}</td>
+                                      <td>{{ emp|get_value_from_dict:'date_end'|date:'Y-m-d' }}</td>
+                                      <td>{{ emp|get_value_from_dict:'price' }}</td>
+                                    </tr>
+                                  {% endfor %}
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row w-100">
+              <!-- DataTales Example -->
+              <div class="card shadow mb-4 col-xl-12">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Статистика</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+					        <div class="table-responsive">
+		                <table class="table table-bordered" width="100%" cellspacing="0">
+		                  <thead>
+		                    <tr>
+		                      <th>Тип</th>
+                          {% for city in cites %}
+		                        <th>{{city.city}}</th>
+                          {% endfor %}
+		                      <th>На линии</th>
+		                      <th>👑 Эксклюзивщики</th>
+		                    </tr>
+		                  </thead>
+		                  <tbody>
+                        {% for wt in work_types %}
+                          {% load djutils %}
+                          <tr>
+                            <td>{{ wt.type }}</td>
+                            {% for city in cites %}
+                              <th><a href="{% url 'site_backend:am_url_wt_city' wt.id city.id %}">{{emp_ammount_in_cities|get_value_from_dict:city.id|get_value_from_dict:wt.id}}</a></th>
+                            {% endfor %}
+                              <th><a href="{% url 'site_backend:am_url_wt_online' wt.id %}">{{active_by_wt|get_value_from_dict:wt.id}}</a></th>
+                              <th><a href="{% url 'site_backend:am_url_wt_exсlusive' wt.id %}">{{exclusive_by_wt|get_value_from_dict:wt.id}}</a></th>
+                          </tr>
+                        {% endfor %}
+		                  </tbody>
+		                </table>
+		              </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Deals history -->
+        <div class="container-fluid">
+            <div class="card shadow col">
+                <div class="card-header">
+                  <h2>Добро пожаловать, {{ request.user.username }}</h2>
+                </div>
+
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% endcache %}

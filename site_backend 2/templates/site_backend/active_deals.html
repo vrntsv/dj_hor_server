@@ -1,0 +1,139 @@
+{% extends 'site_backend/base.html' %}
+{% load djutils %}
+{% load custom_filters %}
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>SB Admin 2 - Tables</title>
+
+  <!-- Custom fonts for this template -->
+  <link href="/static/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="/static/css/sb-admin-2.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this page -->
+  <link href="/static/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+  <script type="text/javascript" src="jquery.dataTables.js"></script>
+
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+        $('#example').DataTable( {
+            "order": [[ 3, "desc" ]]
+        } );
+    } );  
+  </script>
+
+</head>
+
+<body id="page-top">
+
+{% block content %}
+
+
+  <!-- End of Page Wrapper -->
+<div class="row">
+      <div class="card shadow col">
+        <div class="card-header">
+          <h2>Активные заказы</h2>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <!--
+                    💳 / 💵 - нал/безнал
+                    Ид, ид юзера , адрес, телефон клиента, телефон мастера, дата публикации, дата принятия, сумма указанная в заявке, партнёр ( кликабельный)
+                  -->
+                  <th>Дата публикации</th>
+                  <th>Дата принятия</th>
+                  <th>ID исполнителя</th>
+                  <th>ID сделки</th>
+                  <th>Телефон клиента</th>
+                  <th>Телефон мастера</th>
+                  <th>Сумма указаная в заявке</th>
+                  <th>Партнер</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for deal in deals %}
+
+                <tr>
+                  <!-- https://tehpomosh.amocrm.ru/leads/detail/23363851 пример ссылки по id сделки-->
+                  <td>{{ deal|get_value_from_dict:'date' }}</td>
+                  <td>{% if deal|get_value_from_dict:'date_accept' %}{{ deal|get_value_from_dict:'date_accept' }} {% else %} - {% endif %}</td>
+                  <td>{% if deal|get_value_from_dict:'id_user_id' and  deal|get_value_from_dict:'id_user_id' != 'None'%}
+                      <a href="{% url 'site_backend:master_card_url' deal|get_value_from_dict:'id_user_id'  %}"> {{ deal|get_value_from_dict:'id_user_id'|add_emoji_if_excl }} {{ deal|get_value_from_dict:'id_user_id' }} </a>
+                          {% else %}
+                            -
+                          {% endif %}
+                  </td>
+                  <td class=" text-center" data-toggle="tooltip" data-placement="right" title="💳 - БЕЗналичные/💵- наличные">{% if deal|get_value_from_dict:'self_employeed' %}💳{% else %}💵{% endif %}
+                      <a href=" https://tehpomosh.amocrm.ru/leads/detail/{{ deal|get_value_from_dict:'id' }}">{{ deal|get_value_from_dict:'id' }}</a>
+                  </td>
+
+                  <td>{{ deal|get_value_from_dict:'phone' }} </td>
+                    <td >{% if deal|get_value_from_dict:'id_user_id' and  deal|get_value_from_dict:'id_user_id' != 'None'%} {{ deal|get_value_from_dict:'id_user_id'|get_master_phone }} {% else %} -{% endif %} </td>
+
+                  <td>{{ deal|get_value_from_dict:'price' }}</td>
+                  <td> {% if deal|get_value_from_dict:'id_proped' %}<a href="{% url "site_backend:master_card_url" deal|get_value_from_dict:'id_proped' %}">{{ deal|get_value_from_dict:'id_proped'|add_emoji_if_excl }} {{ deal|get_value_from_dict:'id_proped' }}</a> {% else %} - {% endif %}</td>
+
+
+                </tr>
+              {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+  </div>
+
+              {% for deal in deals %}
+              <form action="{% url "site_backend:master_card_write_off_url" deal|get_value_from_dict:'id'%}" method="post">
+                  <div class="modal fade" id="deal_id_write_off-{{deal|get_value_from_dict:'id'}}" tabindex="-1" role="dialog">
+                            <div class="modal-dialog modal-xl" role="document">
+                                <div class="modal-content">
+                                    {% csrf_token %}
+                                    <h2 class="m-0 font-weight-bold text-primary" style="alignment: center; align-content: center">Списать деньги по сделке {{deal|get_value_from_dict:'id'}}</h2>
+                                    <input type="number" class="form-control" name="money" placeholder="Введите сумму" required><br>
+                                    <textarea name="comment" id="" cols="20" rows="5" placeholder="Введите комментарий"></textarea>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-outline-success">Подтвердить</button>
+                                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Закрыть</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                </form>
+                  <form action="{% url "site_backend:master_card_charge_url" deal|get_value_from_dict:'id'%}" method="post">
+                      <div class="modal fade" id="deal_id_charge-{{deal|get_value_from_dict:'id'}}" tabindex="-1" role="dialog">
+                                <div class="modal-dialog modal-xl" role="document">
+                                    <div class="modal-content">
+                                        {% csrf_token %}
+                                        <h2 class="m-0 font-weight-bold text-primary" style="alignment: center; align-content: center">Вернуть деньги по сделке {{deal|get_value_from_dict:'id'}}</h2>
+                                        <input type="number" class="form-control" name="money" placeholder="Введите сумму" required><br>
+                                        <textarea name="comment" id="" cols="20" rows="5" placeholder="Введите комментарий"></textarea>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-outline-success">Подтвердить</button>
+                                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Закрыть</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                </form>
+          {% endfor %}
+{% endblock %}

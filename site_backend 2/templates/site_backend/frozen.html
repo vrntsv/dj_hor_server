@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% extends 'site_backend/base.html' %}
+{% load static %}
+{% load djutils %}
+{% load cache %}
+{% load custom_filters %}
+{% cache 500 active_masters %}
+
+{% block content %}
+     <!-- Main Content -->
+      <div id="content">
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <!-- 
+                        баланс 1000 / 500 
+                        сделок: 10/5/3 выпол/сорвано/предложено 
+                              👑 - эксклюзив
+                        ✅ / ❌ - на линии
+                              🥇 - услуга самый первый
+                      -->
+                      <th>Город</th>
+                      <th>ФИО</th>
+                      <th>Телефон</th>
+                        <th>Дата и время срыва заказа</th>
+                      <th>Причина срыва заказа</th>
+                      <th>Действие</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for emp in active_masters %}
+                        <tr>
+                          <td>{{ emp|get_value_from_dict:'name_city' }}</td>
+                          <td>{% if emp|get_value_from_dict:'exclusive' == 1 %} 👑 {% endif %}
+                              <a href="{% url "site_backend:master_card_url"  emp|get_value_from_dict:'id' %}">{{emp|get_value_from_dict:'full_name'}}</a>
+                          {% if emp|get_value_from_dict:'active' == 1 %} ✅ {% else %} ❌ {% endif %}
+                          {% if emp|get_value_from_dict:'very_first' %} 🥇 {% endif %} </td>
+                          <td>{{emp|get_value_from_dict:'phone'}}</td>
+                          <td>{% if emp|get_value_from_dict:'id'|get_users_last_deal_date  != 'None' %}{{emp|get_value_from_dict:'id'|get_users_last_deal_date }} {% else %} - {% endif %}</td>
+                          <th>{% if not emp|get_value_from_dict:'comment' %}{{emp|get_value_from_dict:'id'|get_users_last_deal_comment }} {% else %} {{ emp|get_value_from_dict:'comment' }} {% endif %}</th>
+                          <!-- выводи сюда коэфициент (80%) формула : k = m/N
+                          N - общее число сделок пользователя
+                          m - выполнено
+                          k - коэффициент  -->
+                          <!--  -->
+                      	  </th>
+                          <th>
+                            <div class="btn-group">
+                              <form action="{% url 'site_backend:master_card_unfreeze_url' emp|get_value_from_dict:'id' %}" method="post">
+
+                                <button  type="submit"  class="col my-auto btn bg-success-200">Разморозить</button>
+                              </form>                              <!-- <div class="dropdown-menu">
+                                <a class="dropdown-item list-group-item-secondary" href="#"data-toggle="modal" data-target="#editMenu">Редактировать</a>
+                                <a class="dropdown-item list-group-item-primary" href="#">Заморозить</a>
+                                <a class="dropdown-item list-group-item-danger" href="#">Заблокировать</a>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item list-group-item-info" href="#">Бонус 1 заказ</a>
+                              </div> -->
+                            </div>
+                          </th>
+                        </tr>
+                   {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+
+{% endblock %}
+    {% endcache %}
+
+</title>
+</head>
+<body>
+
+</body>
+</html>

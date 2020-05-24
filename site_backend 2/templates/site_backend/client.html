@@ -1,0 +1,108 @@
+{% extends 'site_backend/base.html' %}
+
+{% load static %}
+{% load djutils %}
+{% load custom_filters %}
+
+{% block content %}
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-body">
+              <div class="table-responsive">
+
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <!-- 
+                        ✔ / ❌ - зареган/нет
+                      -->
+                      <th>Дата регистрации</th>
+                      <th>ID Клиента</th>
+                      <th>ФИО</th>
+                      <th>Телефон</th>
+                      <th>Город</th>
+                      <th>Модель автомобиля</th>
+                      <th>Кол-во звонков</th>
+                      <th>Действие</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for client in clients %}
+                      <tr>
+                        <form method="POST" action="{% url "site_backend:clients_url" %}">
+                          {% csrf_token %}
+
+                              <td>{{client|get_value_from_dict:'reg_date'}}</td>
+                              <td>{% if client|get_value_from_dict:'status' == 1 %} ✔ {% else %} ❌ {% endif %}{{ client|get_value_from_dict:'id' }}</td>
+                              <td>{% if client|get_value_from_dict:'full_name' and client|get_value_from_dict:'full_name' != 'None' %}{{ client|get_value_from_dict:'full_name' }} {% else %} - {% endif %}</td>
+                              <td>{% if client|get_value_from_dict:'phone' and client|get_value_from_dict:'phone' != 'None' %}{{ client|get_value_from_dict:'phone' }} {% else %} - {% endif %}</td>
+                              <td>{% if client|get_value_from_dict:'city' and client|get_value_from_dict:'city' != 'err' %}{{ client|get_value_from_dict:'city'|get_city_name }} {% else %} - {% endif %}</td>
+                              <td>{% if client|get_value_from_dict:'model_auto' and client|get_value_from_dict:'model_auto' != 'None' %}{{ client|get_value_from_dict:'model_auto' }} {% else %} - {% endif %}</td>
+                              <td>{{ client|get_value_from_dict:'count_call' }}</td>
+
+                              <td>
+
+                                 {% if client|get_value_from_dict:'status' == 1 %}
+                                     <input type="hidden" name="action" value="freeze">
+                                    <button class='btn btn-outline-danger'>Заблокировать</button>
+                                 {% else %}
+                                     <input type="hidden" name="action" value="unfreeze">
+                                    <button class='btn btn-outline-success'>Разблокировать</button>
+                                 {% endif %}
+                              </td>
+
+                      </form>
+                      </tr>
+                  {% endfor %}
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+    </div>
+    <!-- End of Content Wrapper -->
+  </div>
+
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
