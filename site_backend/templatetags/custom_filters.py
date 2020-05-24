@@ -12,11 +12,20 @@ def multiply(value, arg):
 
 
 @register.filter
+def plus(value, arg):
+    return value * arg
+
+@register.filter
+def divide(value, arg):
+    return value / arg
+
+
+@register.filter
 def count_percent(value, percent):
     try:
         return value * percent / 100
     except:
-        return 'err'
+        return 0
 
 
 @register.filter
@@ -25,7 +34,31 @@ def count_user_percent(value, percent):
         user_percent = 100 - percent
         return value * user_percent / 100
     except:
-        return 'err'
+        return 0
+
+
+@register.filter
+def get_ammount_active_deal(str):
+    return models.Deals.objects.filter(status__in=[1, 2, 3]).aggregate(Count('id'))['id__count']
+
+
+@register.filter
+def get_ammount_blocked_users(str):
+    return models.Employees.objects.filter(status=3).aggregate(Count('id'))['id__count']
+
+@register.filter
+def get_ammount_active_users(str):
+    return models.Employees.objects.filter(status=1).aggregate(Count('id'))['id__count']
+
+@register.filter
+def get_ammount_frozen_users(str):
+    return models.Employees.objects.filter(status=2).aggregate(Count('id'))['id__count']
+
+
+@register.filter
+def get_ammount_register_users(str):
+    return models.Employees.objects.filter(status=0).aggregate(Count('id'))['id__count']
+
 
 @register.filter
 def get_wt_name(wt_id):
@@ -72,13 +105,37 @@ def add_emoji_if_excl(id_master):
 
 @register.filter
 def success_percent(id_master):
-    complited_deals = models.Deals.objects.filter(id=id_master, status=1).aggregate(Count('id'))['id__count']
-    all_deals = models.Deals.objects.filter(id_master).aggregate(Count('id'))['id__count']
-    try:
-        return complited_deals/100 * all_deals
-    except Exception:
+    complited_deals = models.Deals.objects.filter(id_user=id_master, status=4).aggregate(Count('id'))['id__count']
+    if complited_deals == 0:
         return 0
+    all_deals = models.Deals.objects.filter(id_user=id_master).aggregate(Count('id'))['id__count']
+    if all_deals == 0:
+        return 0
+    return int(complited_deals/all_deals * 100)
 
+
+@register.filter
+def get_users_last_deal_comment(master_id):
+    try:
+        comment = models.Deals.objects.filter(id_user=master_id)[:1].values()[0]['comment']
+        print('124 ', comment)
+        if not comment:
+            return None
+        return comment
+    except:
+        return None
+
+
+@register.filter
+def get_users_last_deal_date(master_id):
+    try:
+        date = models.Deals.objects.filter(id_user=master_id)[:1].values()[0]['date_drop']
+        print('date', date)
+        if not date:
+            return None
+        return date
+    except:
+        return None
 
 
 

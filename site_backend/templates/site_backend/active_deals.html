@@ -73,18 +73,19 @@
                 <tr>
                   <!-- https://tehpomosh.amocrm.ru/leads/detail/23363851 пример ссылки по id сделки-->
                   <td>{{ deal|get_value_from_dict:'date' }}</td>
-                  <td>{% if deal|get_value_from_dict:'date_accepted' %}{{ deal|get_value_from_dict:'date_accepted' }} {% else %} - {% endif %}</td>
-                  <td>{% if deal|get_value_from_dict:'id_user' and  deal|get_value_from_dict:'id_user' != 'None'%}
-                      <a href="{% url 'site_backend:master_card' deal|get_value_from_dict:'id_user'  %}"> {{ deal|get_value_from_dict:'id_user'|add_emoji_if_excl }} {{ deal|get_value_from_dict:'id_user' }} </a>
+                  <td>{% if deal|get_value_from_dict:'date_accept' %}{{ deal|get_value_from_dict:'date_accept' }} {% else %} - {% endif %}</td>
+                  <td>{% if deal|get_value_from_dict:'id_user_id' and  deal|get_value_from_dict:'id_user_id' != 'None'%}
+                      <a href="{% url 'site_backend:master_card_url' deal|get_value_from_dict:'id_user_id'  %}"> {{ deal|get_value_from_dict:'id_user_id'|add_emoji_if_excl }} {{ deal|get_value_from_dict:'id_user_id' }} </a>
                           {% else %}
-                          -
-                  {% endif %}</td>
+                            -
+                          {% endif %}
+                  </td>
                   <td class=" text-center" data-toggle="tooltip" data-placement="right" title="💳 - БЕЗналичные/💵- наличные">{% if deal|get_value_from_dict:'self_employeed' %}💳{% else %}💵{% endif %}
                       <a href=" https://tehpomosh.amocrm.ru/leads/detail/{{ deal|get_value_from_dict:'id' }}">{{ deal|get_value_from_dict:'id' }}</a>
                   </td>
 
                   <td>{{ deal|get_value_from_dict:'phone' }} </td>
-                    <td >{% if deal|get_value_from_dict:'id_user' and  deal|get_value_from_dict:'id_user' != 'None'%} {{ deal|get_value_from_dict:'id_user'|get_master_phone }} {% else %} - {% endif %} </td>
+                    <td >{% if deal|get_value_from_dict:'id_user_id' and  deal|get_value_from_dict:'id_user_id' != 'None'%} {{ deal|get_value_from_dict:'id_user_id'|get_master_phone }} {% else %} -{% endif %} </td>
 
                   <td>{{ deal|get_value_from_dict:'price' }}</td>
                   <td> {% if deal|get_value_from_dict:'id_proped' %}<a href="{% url "site_backend:master_card_url" deal|get_value_from_dict:'id_proped' %}">{{ deal|get_value_from_dict:'id_proped'|add_emoji_if_excl }} {{ deal|get_value_from_dict:'id_proped' }}</a> {% else %} - {% endif %}</td>

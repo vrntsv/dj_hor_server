@@ -33,14 +33,29 @@ def get_sum_very_first():
     return obj['price__sum']
 
 
-def get_sum_transfer_by_date(start_date=date.today() - timedelta(days=31), end_date=date.today()):
+def get_sum_very_first_by_date(start_date=date.today().replace(day=1), end_date=date.today()):
     """
     Пулучение сумму переврдов за период времени
     :param start_date:
     :param end_date:
     :return:
     """
+
     # print(start_date, end_date)
+    obj = models.VeryFirst.objects.filter(date_start__gte=start_date, date_start__lte=end_date).aggregate(Sum('price'))
+    return obj['price__sum']
+
+
+
+
+
+def get_sum_transfer_by_date(start_date=date.today().replace(day=1), end_date=date.today()):
+    """
+    Пулучение сумму переврдов за период времени
+    :param start_date:
+    :param end_date:
+    :return:
+    """
     obj = models.AllTransfer.objects.filter(date__gte=start_date, date__lte=end_date).aggregate(Sum('value'))
     try:
         return obj['value__sum']
@@ -48,7 +63,7 @@ def get_sum_transfer_by_date(start_date=date.today() - timedelta(days=31), end_d
         return None
 
 
-def get_spent_transfer_by_date(start_date=date.today() - timedelta(days=31), end_date=date.today()):
+def get_spent_transfer_by_date(start_date=date.today().replace(day=1), end_date=date.today()):
     """
     Пулучение сумму переврдов за период времени
     :param start_date:
@@ -91,7 +106,7 @@ def get_amo_key():
     return models.Config.objects.filter(id_field=1).values()
 
 
-def get_sum_proped_by_date(start_date=date.today() - timedelta(days=31), end_date=date.today()):
+def get_sum_proped_by_date(start_date=date.today().replace(day=1), end_date=date.today()):
     """
     Доход по предложенным сделкам по датам
     :param start_date:
@@ -109,7 +124,7 @@ def get_sum_proped_by_date(start_date=date.today() - timedelta(days=31), end_dat
     return sum
 
 
-def get_sum_promo_by_date(start_date=date.today() - timedelta(days=31), end_date=date.today()):
+def get_sum_promo_by_date(start_date=date.today().replace(day=1), end_date=date.today()):
     """
     Доход по промокодам по дате
     :param start_date:
@@ -137,13 +152,19 @@ def sum_excl_debt():
     Задолжность эксклюзовов
     :return:
     """
-    sum = models.Employees.objects.filter(exclusive__exact=1, balance__lt=0).aggregate(Sum('balance'))
+    sum = models.Employees.objects.filter(exclusive__exact=1, balance__gt=0).aggregate(Sum('balance'))
     return sum['balance__sum']
 
 
 def get_sum_left_transfers():
-    sum = models.Employees.objects.aggregate(Sum('balance'))
+    sum = models.Employees.objects.filter(balance__gt=0).aggregate(Sum('balance'))
     return sum['balance__sum']
+
+
+def get_sum_self_e():
+    sum = models.Deals.objects.filter(self_employeed=1).aggregate(Sum('money_on_balance'))
+    return sum['money_on_balance__sum']
+
 
 def get_work_types():
     """
@@ -194,6 +215,8 @@ def change_wt(wt_id, wt_data):
     wt.save()
 
 
+
+
 def get_employees_very_first():
     """
     Ошибка с потерей данных в словаре у very_first_data
@@ -212,9 +235,10 @@ def get_employees_very_first():
 def get_employees_very_first_raw():
     from django.db import connection
     cursor = connection.cursor()
-    cursor.execute('SELECT e.id, e.phone, e.full_name, vf.date_start, vf.date_end, vf.tariff, vf.price FROM employees e '
+    cursor.execute('SELECT e.id, e.phone, e.full_name, e.status, vf.date_start, vf.date_end, vf.tariff, vf.price FROM employees e '
                    'LEFT JOIN very_first vf on e.id=vf.id_user '
-                   'WHERE TIMESTAMPDIFF (SECOND, vf.date_end, NOW()) > 0')
+                   'WHERE vf.date_end >= CURDATE()'
+                   ' AND e.status=1 ORDER BY date_start DESC')
     return dictfetchall(cursor)
 
 
@@ -238,14 +262,17 @@ def get_emp_ammount_in_cities():
     return data
 
 
-def add_new_work_type(name, step_0, step_1, step_2, step_3, step_4, step_5):
-    new_wt = models.WorkType(id_field=1, type=name,
+def add_new_work_type(name, step_0, step_1, step_2, step_3, step_4, step_5, step_6):
+    new_wt = models.WorkType(id_field=1,
+                             type=name,
+                             active=1,
                              comm_stage_0=step_0,
                              comm_stage_1=step_1,
                              comm_stage_2=step_2,
                              comm_stage_3=step_3,
                              comm_stage_4=step_4,
                              comm_stage_5=step_5,
+                             comm_stage_6=step_6,
                              )
     new_wt.save()
 
@@ -446,10 +473,6 @@ def freeze_user(id_user, comment):
     emp.save()
 
 
-def unfreeze_user(id_user):
-    emp = models.Employees.objects.get(id=id_user)
-    emp.status = 1
-    emp.save()
 
 
 def block_user(id_user, comment):
@@ -460,8 +483,15 @@ def block_user(id_user, comment):
 
 
 def unblock_user(id_user):
+    try:
+        last_deal = models.Deals.objects.get(id_user=id_user)
+        last_deal.comment = None
+        last_deal.save()
+    except:
+        print('err')
     emp = models.Employees.objects.get(id=id_user)
     emp.status = 1
+    emp.comment = None
     emp.save()
 
 def change_balance(id_user, main_balance, bonuses):
@@ -493,7 +523,7 @@ def get_active_masters_info(wt=None, city=None, exclusive=None, active=None,
                             vf=None, freeze=None, blocked=None, negative_balance=None,
                             positive_balance=None, registered_today=None, search=None, do_pagination=None):
     emp_info = []
-    emps = models.Employees.objects.all().filter(status=1)
+    emps = models.Employees.objects.all().filter()
     if wt:
         emps = emps.filter(employeesworktype__id_work_type=wt)
     if city:
@@ -506,8 +536,6 @@ def get_active_masters_info(wt=None, city=None, exclusive=None, active=None,
         emps = emps.filter(status=2)
     if blocked:
         emps = emps.filter(status=3)
-    if blocked:
-        emps = emps.filter(status=3)
     if negative_balance:
         emps = emps.filter(balance__lte=0)
     if positive_balance:
@@ -515,7 +543,7 @@ def get_active_masters_info(wt=None, city=None, exclusive=None, active=None,
     if registered_today:
         emps = emps.filter(reg_date=datetime.date.today)
     if search:
-        emps = emps.filter(full_name__contains=search) | emps.filter(phone__contains=search)
+        emps = emps.filter(full_name__contains=search) | emps.filter(phone__contains=search) | emps.filter(id__contains=search)
     for emp in emps.values():
         if vf:
             if list(models.VeryFirst.objects.filter(id_user=emp['id']).values()) == []:
@@ -543,6 +571,7 @@ def get_active_masters_info(wt=None, city=None, exclusive=None, active=None,
                 'balance': emp['balance'],
                 'bonuses': emp['bonuses'],
                 'exclusive': emp['exclusive'],
+                'comment': emp['comment'],
                 'active': emp['active'],
                 'very_first': very_first,
                 'referal_income': referal_income,
@@ -553,6 +582,10 @@ def get_active_masters_info(wt=None, city=None, exclusive=None, active=None,
         )
 
     return emp_info
+
+
+
+
 
 
 def get_emp_wt(master_id):
@@ -675,17 +708,17 @@ def get_wt_list():
 
 def get_master_card_info(master_id):
     user_data = models.Employees.objects.all().filter(id=master_id).values()
-    users_deals = models.Deals.objects.all().filter(id_user=master_id).values()
+    users_deals = models.Deals.objects.all().filter(id_user=master_id).order_by('date_accept').reverse().values()
     users_referal = models.Employees.objects.all().filter(promo_id=master_id).values('id', 'balance')
     for user in users_referal:
         deals_ammount = models.Deals.objects.all().filter(id_user=master_id).aggregate(Count('id'))['id__count']
         user.update({'deals_ammount': deals_ammount})
-    users_session_history = models.UserSessionHistory.objects.all().filter(id=master_id).values()
-    users_transfers = models.UsersTransfers.objects.all().filter(id_user=master_id).values()
-
+    users_session_history = models.UserSessionHistory.objects.all().filter(id=master_id).order_by('-date').values()
+    users_transfers = models.UsersTransfers.objects.all().filter(id_user=master_id).order_by('-date').values()
+    print(user_data)
     return {
         'id': master_id,
-        'work_types': list(get_emp_wt(master_id)),
+        'work_types': list(get_emp_wt_list(master_id)),
         'city': models.City.objects.all().filter(id=user_data[0]['id_city']).values('city')[0]['city'],
         'user_data': list(user_data),
         'deals': list(users_deals),
@@ -702,7 +735,7 @@ def get_active_deals():
 
 
 def get_history():
-    return models.UsersHistory.objects.all().values()
+    return models.UsersHistory.objects.all().reverse().values()
 
 
 def get_clients():
@@ -711,4 +744,5 @@ def get_clients():
 
 def get_active_deals():
     deals = models.Deals.objects.filter(status__in=[1, 2, 3]).values()
+    print(deals)
     return deals

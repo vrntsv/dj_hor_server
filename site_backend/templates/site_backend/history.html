@@ -19,7 +19,7 @@
           <div class="card shadow mb-4">
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" width="100%" cellspacing="0">
                   <thead>
                     <tr>
                       <th>ID исполнителя</th>
@@ -32,7 +32,13 @@
                     <tr>
                       <td><a href="{% url "site_backend:master_card_url"  h|get_value_from_dict:'id_user_id' %}">{{h|get_value_from_dict:'id_user_id'}}</a></td>
                       <td>{{h|get_value_from_dict:'date'}}</td>
+                        {% if 'пополнил' in h|get_value_from_dict:'text' or 'подключил' in h|get_value_from_dict:'text'%}
+                        <th style="color: palegreen">{{h|get_value_from_dict:'text'}}</th>
+                    {% elif 'оплатил' in h|get_value_from_dict:'text'%}
+                         <th style="color: gold">{{h|get_value_from_dict:'text'}}</th>
+                    {% else %}
                       <td>{{h|get_value_from_dict:'text'}}</td>
+                    {% endif %}
                     </tr>
                   {% endfor %}
                   </tbody>

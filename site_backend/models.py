@@ -269,7 +269,6 @@ class VeryFirst(models.Model):
         db_table = 'very_first'
 
 
-
 class Deals(models.Model):
     id = models.BigIntegerField(primary_key=True)
     id_user = models.ForeignKey(Employees, to_field='id', db_column='id_user',  on_delete=models.DO_NOTHING)

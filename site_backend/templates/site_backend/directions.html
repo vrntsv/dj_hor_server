@@ -14,7 +14,7 @@
 		            </div>
 		            <div class="card-body">
 		              <div class="input-responsive">
-		                <form action="" method="post" >
+                        <form action="{% url "site_backend:directions_url" %}" name="create_direction" method="post">
 		                  <div class="form-row">
                               {% csrf_token %}
 		                    <div class="form-group col-md-6">
@@ -61,7 +61,7 @@
 				            <div class="input-responsive">
 				              	<div class="table-responsive">
 				              		<p class='text-xs'>Для смены таймера перейдите в раздел "техническое меню",затем "Установки"</p>
-					                <table class="table table-sm-4 table-md-8 table-lg-12 table-bordered" id="dataTable" width="100%" cellspacing="0">
+					                <table class="table table-sm-4 table-md-8 table-lg-12 table-bordered" width="100%" cellspacing="0">
 					                  <thead>
 					                    <tr class="text-gray-900">
 											<th><b>Направление</b></th>
@@ -80,7 +80,7 @@
 					                  <tfoot>
 					                  	<tr class="text-gray-900">
 					                      	<th><b>Направление</b></th>
-											<th><b>Эксклюзивщик</b></th>
+											<th><b>Этап 0</b></th>
 											<th><b>Этап 1</b></th>
 											<th><b>Этап 2</b></th>
 											<th><b>Этап 3</b></th>
@@ -88,14 +88,13 @@
 											<th><b>Этап 5</b></th>
 											<th><b>Дисконтный этап</b></th>
 											<th><b>Пост-оплата</b></th>
-											<th><b>Универсал</b></th>
 											<th><b>Действие</b></th>
 					                    </tr>
 					                  </tfoot>
 					                  <tbody>
-	                                  {% for wt in work_types %}
+                              {% for wt in work_types %}
 					                    <tr>
-					                      <th>{{ wt.type }}</th>
+					                      <th>{% if wt.excl_type  %} 👑 {% endif %}{{ wt.type }}</th>
 					                      <th>{{ wt.comm_stage_0 }}</th>
 					                      <th>{{ wt.comm_stage_1 }}</th>
 					                      <th>{{ wt.comm_stage_2 }}</th>
@@ -104,11 +103,10 @@
 					                      <th>{{ wt.comm_stage_5 }}</th>
 					                      <th>{{ wt.comm_stage_6 }}</th>
 					                      <th>{% if wt.post_pay  %} ✅ {% else %} ❎ {% endif %}</th>
-					                      <!-- назови переменную -->
-					                      <th>{% if wt.excl_type  %} ✅ {% else %} ❎ {% endif %}</th>
-	                                        <th>
+{#					                      <th>{% if wt.excl_type  %} ✅ {% else %} ❎ {% endif %}</th>#}
+                                <th>
 					                        <button  type="submit" data-toggle="modal" data-target="#wt-{{ wt.id }}"  class="col my-auto btn bg-gray-200">Редактировать</button>
-					                        <button  type="submit" class="col my-auto btn btn-danger">Удалить</button>
+					                        <button  type="submit" class="col my-auto btn btn-outline-danger">Удалить</button>
 					                      </th>
 					                    </tr>
 	                                  {% endfor %}
@@ -168,23 +166,23 @@
                                     <label for="">Дисконтный этап</label>
                                     <input type="text" class="form-control" name="step6" value="{{ wt.comm_stage_6 }}">
                                 </div>
-                                <div class="custom-control custom-switch">
+                                <div>
                                     {% if wt.post_pay %}
-                                        <input type="checkbox" class="custom-control-input" id="post_pay" value="on" name="post_pay" checked>
-                                        <label class="custom-control-label" for="post_pay"> Пост-оплата </label>
+                                        <input type="checkbox"  id="post_pay" value="on" name="post_pay" checked>
+                                        <label  for="post_pay"> Пост-оплата </label>
                                     {% else %}
-                                        <input type="checkbox" class="custom-control-input" id="post_pay" value="off" name="post_pay" >
-                                        <label class="custom-control-label" for="post_pay"> Пост-оплата </label>
+                                        <input type="checkbox" id="post_pay" value="off" name="post_pay" >
+                                        <label  for="post_pay"> Пост-оплата </label>
                                     {% endif %}
                                 </div>
 
-                                <div class="custom-control custom-switch">
+                                <div>
                                     {% if wt.excl_type %}
-                                        <input type="checkbox" class="custom-control-input" id="excl_type" value="on" name="excl_type" checked>
-                                        <label class="custom-control-label" for="excl_type"> Универсалы </label>
+                                        <input type="checkbox" id="excl_type" value="on" name="excl_type" checked>
+                                        <label for="excl_type"> Универсалы </label>
                                     {% else %}
-                                        <input type="checkbox" class="custom-control-input" id="excl_type" value="off" name="excl_type" >
-                                        <label class="custom-control-label" for="excl_type"> Универсалы </label>
+                                        <input type="checkbox" id="excl_type" value="off" name="excl_type" >
+                                        <label  for="excl_type"> Универсалы </label>
                                     {% endif %}
                                 </div>
 

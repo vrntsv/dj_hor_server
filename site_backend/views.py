@@ -3,7 +3,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate,login
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page
-
 from django.urls import reverse
 from django.contrib.auth import logout
 
@@ -46,20 +45,23 @@ def index_router(request):
     if request.user.is_authenticated:
         if request.method == 'GET':
             if request.user.is_superuser:
-                print('is_super')
-                print('testtstes')
                 return render(request, 'site_backend/index.html',
                               {
-                                  'sum_very_first': services.get_sum_very_first(),
+                                  'sum_very_first': services.get_sum_very_first_by_date(),
                                   'sum_transfer': services.get_sum_transfer_by_date(),
                                   'spent_transfer': services.get_spent_transfer_by_date(),
                                   'sum_proped': services.get_sum_proped_by_date(),
+                                  'sum_self_e': services.get_sum_self_e(),
                                   'sum_promo': services.get_sum_promo_by_date(),
                                   'sum_bonuses': services.get_sum_bonuses(),
                                   'sum_excl_debt': services.sum_excl_debt(),
                                   'left_transfers': services.get_sum_left_transfers(),
                                   'very_first_emps': services.get_employees_very_first_raw(),
-
+                                  'work_types': services.get_work_types(),
+                                  'cites': services.get_active_cities(),
+                                  'emp_ammount_in_cities': services.get_emp_ammount_in_cities(),
+                                  'exclusive_by_wt': services.get_emp_ammount_wt(exclusive=True),
+                                  'active_by_wt': services.get_emp_ammount_wt(active=True),
                               }
                               )
             else:
@@ -75,7 +77,7 @@ def index_router(request):
                 if start_date != '' and end_date != '':
                     return render(request, 'site_backend/index.html',
                                   {
-                                      'sum_very_first': services.get_sum_very_first(),
+                                      'sum_very_first': services.get_sum_very_first_by_date(start_date, end_date),
                                       'sum_transfer': services.get_sum_transfer_by_date(start_date, end_date),
                                       'spent_transfer': services.get_spent_transfer_by_date(start_date, end_date),
                                       'sum_proped': services.get_sum_proped_by_date(start_date, end_date),
@@ -84,7 +86,11 @@ def index_router(request):
                                       'sum_excl_debt': services.sum_excl_debt(),
                                       'left_transfers': services.get_sum_left_transfers(),
                                       'very_first_emps': services.get_employees_very_first_raw(),
-
+                                      'work_types': services.get_work_types(),
+                                      'cites': services.get_active_cities(),
+                                      'emp_ammount_in_cities': services.get_emp_ammount_in_cities(),
+                                      'exclusive_by_wt': services.get_emp_ammount_wt(exclusive=True),
+                                      'active_by_wt': services.get_emp_ammount_wt(active=True),
                                   }
                                   )
                 else:
@@ -251,25 +257,23 @@ def tech_send_message_clients_router(request):
 
 def directions_router(request):
     if request.user.is_authenticated:
-
         if request.method == 'GET':
             return render(request, 'site_backend/directions.html',
                           {
                               'work_types': services.get_work_types(),
                           })
         elif request.method == 'POST':
-            try:
-                services.add_new_work_type(request.POST.get('directions_name'),
-                request.POST.get('step_0'),
-                request.POST.get('step_1'),
-                request.POST.get('step_2'),
-                request.POST.get('step_3'),
-                request.POST.get('step_4'),
-                request.POST.get('step_5'),
-                request.POST.get('step_6'))
-            except Exception:
-                redirect('directions')
-                return
+            print(request.method)
+
+            services.add_new_work_type(request.POST.get('direction_name'),
+            request.POST.get('step_0'),
+            request.POST.get('step_1'),
+            request.POST.get('step_2'),
+            request.POST.get('step_3'),
+            request.POST.get('step_4'),
+            request.POST.get('step_5'),
+            request.POST.get('step_6'))
+
             return render(request, 'site_backend/directions.html',
                           {
                               'work_types': services.get_work_types(),
@@ -309,6 +313,7 @@ def active_masters_router(request):
 def active_masters_search_router(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
+            print(request.POST)
             return render(request, 'site_backend/active_masters.html', {
                 'active_masters': services.get_active_masters_info(search=request.POST.get('search_input')),
                 'work_types': services.get_work_types()
@@ -333,10 +338,12 @@ def edit_users_data_router(request, master_id):
 
 def frozen_masters_router(request):
     if request.user.is_authenticated:
+        print(services.get_sum_transfer_by_date())
 
         if request.method == 'GET':
-            return render(request, 'site_backend/active_masters.html', {
-                'active_masters': services.get_active_masters_info(freeze=True)
+            return render(request, 'site_backend/frozen.html', {
+                'active_masters': services.get_active_masters_info(freeze=True),
+
             })
         return HttpResponse(status=405)
     else:
@@ -347,7 +354,8 @@ def blocked_masters_router(request):
     if request.user.is_authenticated:
 
         if request.method == 'GET':
-            return render(request, 'site_backend/active_masters.html', {
+            print(services.get_active_masters_info(blocked=True))
+            return render(request, 'site_backend/blocked.html', {
                 'active_masters': services.get_active_masters_info(blocked=True)
             })
         return HttpResponse(status=405)
@@ -431,6 +439,8 @@ def master_card_router(request, master_id):
             return render(request, 'site_backend/master_card.html',
                           {
                               'info': services.get_master_card_info(master_id),
+                              'work_types': services.get_work_types()
+
                           })
         return HttpResponse(status=405)
 
@@ -447,6 +457,8 @@ def master_card_write_off_router(request, master_id):
             return render(request, 'site_backend/master_card.html',
                           {
                               'info': services.get_master_card_info(master_id),
+                              'work_types': services.get_work_types()
+
                           })
         return HttpResponse(status=405)
 
@@ -474,6 +486,8 @@ def master_card_change_balance(request, master_id):
             return render(request, 'site_backend/master_card.html',
                           {
                               'info': services.get_master_card_info(master_id),
+                              'work_types': services.get_work_types()
+
                           })
         return HttpResponse(status=405)
 
@@ -482,34 +496,55 @@ def master_card_freeze_router(request, master_id):
     if request.user.is_authenticated:
         if request.method == 'POST':
             services.freeze_user(master_id, request.POST.get('comment'))
-            #bot.send_message(master_id, request.POST.get('comment'))
+            try:
+                bot.bot.send_message(master_id, '🔒 Ваш аккаунт заморожен. '
+                                            '🔎 После проверки внесенных вами данных'
+                                            ' о заказе с вами свяжется администратор,'
+                                            ' чтобы активировать ваш аккаунт. Ожидайте!')
+            except Exception as e:
+                print('#############################\nError in freeze user router: ', e)
+
             return render(request, 'site_backend/master_card.html',
                           {
                               'info': services.get_master_card_info(master_id),
+                              'work_types': services.get_work_types()
+
                           })
         return HttpResponse(status=405)
+
 
 @csrf_exempt
 def master_card_unfreeze_router(request, master_id):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            services.unfreeze_user(master_id)
-            #bot.send_message(master_id, 'Вам открыт доступ к заказам')
+            services.unblock_user(master_id)
+            try:
+                bot.bot.send_message(master_id, '🔓 Вам открыт доступ к заказам !')
+            except Exception as e:
+                print('#############################\nError in unfreeze user router: ', e)
             return render(request, 'site_backend/master_card.html',
                           {
                               'info': services.get_master_card_info(master_id),
+                              'work_types': services.get_work_types()
+
                           })
         return HttpResponse(status=405)
+
 
 @csrf_exempt
 def master_card_block_user_router(request, master_id):
     if request.user.is_authenticated:
         if request.method == 'POST':
             services.block_user(master_id, request.POST['comment'])
-            bot.send_message(master_id, request.POST['comment'])
+            try:
+                bot.bot.send_message(master_id, '🔐 Вам закрыт доступ!')
+            except Exception as e:
+                print('#############################\nError in lock user router: ', e)
             return render(request, 'site_backend/master_card.html',
                           {
                               'info': services.get_master_card_info(master_id),
+                              'work_types': services.get_work_types()
+
                           })
         return HttpResponse(status=405)
 
@@ -518,10 +553,15 @@ def master_card_unblock_user_router(request, master_id):
     if request.user.is_authenticated:
         if request.method == 'POST':
             services.unblock_user(master_id)
-            bot.send_message(master_id, 'Вам открыт доступ к заказам')
+            try:
+                bot.bot.send_message(master_id, '🔓 Вам открыт доступ к заказам !')
+            except Exception as e:
+                print('#############################\nError in unblock user router: ', e)
             return render(request, 'site_backend/master_card.html',
                           {
                               'info': services.get_master_card_info(master_id),
+                              'work_types': services.get_work_types()
+
                           })
         return HttpResponse(status=405)
 
@@ -530,10 +570,12 @@ def master_card_make_excl_user_router(request, master_id):
     if request.user.is_authenticated:
         if request.method == 'POST':
             services.make_excl(master_id)
-            #bot.send_message(master_id, 'Вам ')
+            # bot.bot.send_message(master_id, 'Вам дан статус универсала')
             return render(request, 'site_backend/master_card.html',
                           {
                               'info': services.get_master_card_info(master_id),
+                              'work_types': services.get_work_types()
+
                           })
         return HttpResponse(status=405)
 
@@ -542,10 +584,12 @@ def master_card_unmake_excl_user_router(request, master_id):
     if request.user.is_authenticated:
         if request.method == 'POST':
             services.unmake_excl(master_id)
-            #bot.send_message(master_id, 'Вам ')
+            # bot.bot.send_message(master_id, 'У вас больше нет статуса универсала ')
             return render(request, 'site_backend/master_card.html',
                           {
                               'info': services.get_master_card_info(master_id),
+                              'work_types': services.get_work_types()
+
                           })
         return HttpResponse(status=405)
 
@@ -584,8 +628,6 @@ def registration_router(request):
 
 @csrf_exempt
 def operators_router(request):
-
-
     if request.user.is_authenticated:
 
         if request.method == 'GET':
